@@ -1,2 +1,2 @@
-# zeyi-lyu-edes301
-EDES301 Projects Setup
+# EDES301
+Repository for EDES301 course work
