@@ -1,29 +1,46 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import operator
 
+try:
+    input_func = raw_input
+except NameError:
+    input_func = input
 
 operators = {
     "+": operator.add,
     "-": operator.sub,
     "*": operator.mul,
-    "/": operator.truediv
+    "/": operator.truediv,
+    ">>": operator.rshift,
+    "<<": operator.lshift,
+    "%": operator.mod,
+    "**": operator.pow
 }
 
 
-def get_user_input():
-    """Get input from the user.
-
-    Returns tuple: (number, number, function), or
-    (None, None, None) if the inputs are invalid.
-    """
+def parse_number(text):
     try:
-        number1 = float(input("Enter first number: "))
-        number2 = float(input("Enter second number: "))
-        op = input("Enter function (valid values are +, -, *, /): ")
+        return int(text)
+    except ValueError:
+        return float(text)
 
+
+def get_user_input():
+    try:
+        number1 = parse_number(input_func("Enter first number: "))
+        number2 = parse_number(input_func("Enter second number: "))
+        op = input_func("Enter function (+, -, *, /, >>, <<, %, **): ")
         func = operators.get(op)
-    except Exception:
+
+        if func is None:
+            return (None, None, None)
+
+        if op in (">>", "<<"):
+            if not isinstance(number1, int) or not isinstance(number2, int):
+                return (None, None, None)
+
+    except (ValueError, TypeError):
         return (None, None, None)
 
     return (number1, number2, func)
@@ -37,4 +54,8 @@ if __name__ == "__main__":
             print("Invalid input")
             break
 
-        print(func(num1, num2))
+        try:
+            print(func(num1, num2))
+        except (ArithmeticError, ValueError):
+            print("Invalid calculation")
+            break
